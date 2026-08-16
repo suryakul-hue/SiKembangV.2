@@ -2,25 +2,48 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Atribut yang bisa diisi secara massal (Mass Assignable).
+     * Gabungkan semua kolom baru kamu di sini.
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'age',
+        'password',
+        'google_id',
+        'facebook_id',
+        'gender',    
+        'role',      
+        'avatar',    
+        'child_name',   // <-- Ini yang baru ditambahkan
+        'child_dob',    // <-- Ini yang baru ditambahkan
+        'child_gender', // <-- Ini yang baru ditambahkan
+    ];
+
+    /**
+     * Atribut yang disembunyikan saat data diubah jadi JSON.
+     */
+    protected $hidden = [
+        'password',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'remember_token',
+    ];
+
+    /**
+     * Casting atribut.
      */
     protected function casts(): array
     {
@@ -28,5 +51,38 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Helper: Mendapatkan inisial nama user.
+     */
+    public function initials(): string
+    {
+        return Str::of($this->name)
+            ->explode(' ')
+            ->take(2)
+            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->implode('');
+    }
+
+    /**
+     * Helper: Cek apakah user adalah admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Relationships
+     */
+    public function stuntingRecords()
+    {
+        return $this->hasMany(StuntingRecord::class);
+    }
+
+    public function weekReminders()
+    {
+        return $this->hasMany(WeekReminder::class);
     }
 }

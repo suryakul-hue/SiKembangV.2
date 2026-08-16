@@ -1,6 +1,20 @@
 {
+  "_GuestLayout-BR_mOGPH.js": {
+    "file": "assets/GuestLayout-BR_mOGPH.js",
+    "name": "GuestLayout",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "_InputLabel-BuTx1VJP.js": {
+    "file": "assets/InputLabel-BuTx1VJP.js",
+    "name": "InputLabel",
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
   "resources/css/app.css": {
-    "file": "assets/app-BTnBYZ-X.css",
+    "file": "assets/app-gId21RV6.css",
     "name": "app",
     "names": [
       "app.css"
@@ -8,8 +22,71 @@
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/js/Pages/Auth/BiodataSetup.jsx": {
+    "file": "assets/BiodataSetup-CAC9U0s_.js",
+    "name": "BiodataSetup",
+    "src": "resources/js/Pages/Auth/BiodataSetup.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/Pages/Auth/ConfirmPassword.jsx": {
+    "file": "assets/ConfirmPassword-BK7LCZMi.js",
+    "name": "ConfirmPassword",
+    "src": "resources/js/Pages/Auth/ConfirmPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-BR_mOGPH.js",
+      "_InputLabel-BuTx1VJP.js"
+    ]
+  },
+  "resources/js/Pages/Auth/ForgotPassword.jsx": {
+    "file": "assets/ForgotPassword-D0fEaaGI.js",
+    "name": "ForgotPassword",
+    "src": "resources/js/Pages/Auth/ForgotPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-BR_mOGPH.js"
+    ]
+  },
+  "resources/js/Pages/Auth/Login.jsx": {
+    "file": "assets/Login-CFetK_da.js",
+    "name": "Login",
+    "src": "resources/js/Pages/Auth/Login.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-BR_mOGPH.js",
+      "_InputLabel-BuTx1VJP.js"
+    ]
+  },
+  "resources/js/Pages/Auth/Register.jsx": {
+    "file": "assets/Register-J7MWKd_V.js",
+    "name": "Register",
+    "src": "resources/js/Pages/Auth/Register.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-BR_mOGPH.js",
+      "_InputLabel-BuTx1VJP.js"
+    ]
+  },
+  "resources/js/Pages/Auth/ResetPassword.jsx": {
+    "file": "assets/ResetPassword-ClQhmuLW.js",
+    "name": "ResetPassword",
+    "src": "resources/js/Pages/Auth/ResetPassword.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.jsx",
+      "_GuestLayout-BR_mOGPH.js",
+      "_InputLabel-BuTx1VJP.js"
+    ]
+  },
   "resources/js/Pages/SiKembang.jsx": {
-    "file": "assets/SiKembang-CWjZPL4Q.js",
+    "file": "assets/SiKembang-Cs1oG5Pe.js",
     "name": "SiKembang",
     "src": "resources/js/Pages/SiKembang.jsx",
     "isDynamicEntry": true,
@@ -18,11 +95,17 @@
     ]
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-izA7bsg9.js",
+    "file": "assets/app-DXNhC50J.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
     "dynamicImports": [
+      "resources/js/Pages/Auth/BiodataSetup.jsx",
+      "resources/js/Pages/Auth/ConfirmPassword.jsx",
+      "resources/js/Pages/Auth/ForgotPassword.jsx",
+      "resources/js/Pages/Auth/Login.jsx",
+      "resources/js/Pages/Auth/Register.jsx",
+      "resources/js/Pages/Auth/ResetPassword.jsx",
       "resources/js/Pages/SiKembang.jsx"
     ]
   }

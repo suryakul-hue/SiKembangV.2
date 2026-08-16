@@ -2,18 +2,6 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Third Party Services
-    |--------------------------------------------------------------------------
-    |
-    | This file is for storing the credentials for third party services such
-    | as Resend, Postmark, AWS, and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
-    |
-    */
-
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
@@ -33,6 +21,17 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
-    ],
+    ], // <-- Perhatikan kurung penutup slack ada di sini
 
+'google' => [
+    'client_id' => env('GOOGLE_CLIENT_ID_UAT', env('GOOGLE_CLIENT_ID')),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET_UAT', env('GOOGLE_CLIENT_SECRET')),
+    'redirect' => env('GOOGLE_REDIRECT_UAT', env('GOOGLE_REDIRECT', 'http://localhost:8000/auth/google/callback')),
+],
+
+'facebook' => [
+    'client_id' => env('FACEBOOK_CLIENT_ID'),
+    'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+    'redirect' => env('FACEBOOK_REDIRECT', 'http://localhost:8000/auth/facebook/callback'),
+],
 ];
