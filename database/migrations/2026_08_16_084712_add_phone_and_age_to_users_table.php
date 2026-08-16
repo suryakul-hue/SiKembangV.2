@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone')->nullable()->after('email');
-            $table->unsignedTinyInteger('age')->nullable()->after('phone');
-            $table->string('facebook_id')->nullable()->unique()->after('google_id');
+            $table->string('phone')->nullable();
+            $table->unsignedTinyInteger('age')->nullable();
+            $table->string('facebook_id')->nullable()->unique();
         });
     }
 
@@ -24,8 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('facebook_id')->nullable();
-            $table->string('phone')->nullable();
+            $table->dropColumn(['phone', 'age', 'facebook_id']);
         });
     }
 };
