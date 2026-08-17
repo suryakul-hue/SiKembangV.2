@@ -4,13 +4,17 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\FacebookController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ReminderController;
 use App\Http\Controllers\StuntingController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\EducationController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\ReminderController;
 use App\Http\Controllers\HemoglobinController;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 /*
@@ -28,13 +32,32 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-// Google Authentication
-Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+Route::get('/hemoglobin', [HemoglobinController::class, 'index'])->name('hemoglobin.index');
+Route::get('/education', [EducationController::class, 'index'])->name('education.index');
 
-// Facebook Authentication
-Route::get('/auth/facebook', [FacebookController::class, 'redirect'])->name('auth.facebook');
-Route::get('/auth/facebook/callback', [FacebookController::class, 'callback'])->name('auth.facebook.callback');
+/*
+|--------------------------------------------------------------------------
+| Guest Authentication Routes (Login, Register & OAuth)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    // Login
+    Route::get('/login', function () {
+        return Inertia::render('Auth/Login');
+    })->name('login');
+
+    // Register Manual
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
+
+    // Google OAuth
+    Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+
+    // Facebook OAuth
+    Route::get('/auth/facebook', [FacebookController::class, 'redirect'])->name('auth.facebook');
+    Route::get('/auth/facebook/callback', [FacebookController::class, 'callback'])->name('auth.facebook.callback');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +66,15 @@ Route::get('/auth/facebook/callback', [FacebookController::class, 'callback'])->
 */
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // 1. Dashboard
+    // 👉 ROUTE LOGOUT DITAMBAHKAN DI SINI
+    Route::post('/logout', function (Request $request) {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    })->name('logout');
+
+    // 1. Dashboard Utama
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // 2. Setup Biodata Awal (Orang Tua & Anak)
@@ -51,7 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Auth/BiodataSetup'); 
     })->name('biodata.setup');
 
-    Route::post('/biodata-setup', function (\Illuminate\Http\Request $request) {
+    Route::post('/biodata-setup', function (Request $request) {
         $request->validate([
             'gender'       => 'required|in:laki-laki,perempuan',
             'child_name'   => 'required|string|max:255',
@@ -59,7 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'child_gender' => 'required|in:L,P',
         ]);
 
-        \DB::table('users')->where('id', Auth::id())->update([
+        DB::table('users')->where('id', Auth::id())->update([
             'gender'       => $request->gender,
             'child_name'   => $request->child_name,
             'child_dob'    => $request->child_dob,
@@ -70,11 +101,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect()->route('dashboard');
     })->name('biodata.update');
 
-    // Rute Stunting 
-    Route::get('/stunting/check',                 [StuntingController::class, 'index'])   ->name('stunting.check');
-    Route::post('/stunting/store',                [StuntingController::class, 'store'])   ->name('stunting.store');
-    Route::get('/stunting/riwayat',               [StuntingController::class, 'history']) ->name('stunting.history');
-    Route::get('/stunting/{stuntingRecord}',    [StuntingController::class, 'show'])    ->name('stunting.show');
+    // 3. Stunting
+    Route::get('/stunting/check', [StuntingController::class, 'index'])->name('stunting.check');
+    Route::post('/stunting/store', [StuntingController::class, 'store'])->name('stunting.store');
+    Route::get('/stunting/riwayat', [StuntingController::class, 'history'])->name('stunting.history');
+    Route::get('/stunting/{stuntingRecord}', [StuntingController::class, 'show'])->name('stunting.show');
     Route::delete('/stunting/{stuntingRecord}', [StuntingController::class, 'destroy'])->name('stunting.destroy');
 
     // 4. Recipes - User Access
@@ -90,6 +121,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reminder/tablet-darah', [ReminderController::class, 'update'])->name('reminder.tablet-darah.update');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Admin Protected Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/recipes-admin', [RecipeController::class, 'adminIndex'])->name('recipes.admin');
     Route::get('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
@@ -98,14 +134,3 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::put('/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
 });
-
-Route::get('/hemoglobin', [HemoglobinController::class, 'index'])->name('hemoglobin.index');
-Route::get('/education', [EducationController::class, 'index'])->name('education.index');
-
-Route::get('/login', function () {
-    return Inertia::render('Auth/Login');
-})->name('login');
-
-Route::get('/register', function () {
-    return Inertia::render('Auth/Register');
-})->name('register');

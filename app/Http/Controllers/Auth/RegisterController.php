@@ -13,10 +13,10 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class RegisteredUserController extends Controller
+class RegisterController extends Controller
 {
     /**
-     * Display the registration view.
+     * Menampilkan form pendaftaran
      */
     public function create(): Response
     {
@@ -24,25 +24,23 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Memproses pendaftaran manual
      */
-    public function store(Request $request): RedirectResponse
+    public function register(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'age' => 'required|integer|min:10|max:120',
-            'phone' => 'required|string|max:20',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'name'     => 'required|string|max:255',
+            'age'      => 'required|integer|min:10|max:120',
+            'phone'    => 'required|string|max:20',
+            'email'    => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'age' => $request->age,
-            'phone' => $request->phone,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'age'      => $request->age,
+            'phone'    => $request->phone,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
@@ -50,6 +48,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('biodata.setup', absolute: false));
+        return redirect()->route('biodata.setup');
     }
 }
