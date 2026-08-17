@@ -24,9 +24,9 @@ return [
     ], // <-- Perhatikan kurung penutup slack ada di sini
 
 'google' => [
-    'client_id' => env('GOOGLE_CLIENT_ID_UAT', env('GOOGLE_CLIENT_ID')),
-    'client_secret' => env('GOOGLE_CLIENT_SECRET_UAT', env('GOOGLE_CLIENT_SECRET')),
-    'redirect' => env('GOOGLE_REDIRECT_UAT', env('GOOGLE_REDIRECT', 'http://localhost:8000/auth/google/callback')),
+    'client_id'     => env('GOOGLE_CLIENT_ID'),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    'redirect'      => env('GOOGLE_REDIRECT', 'http://localhost:8000/auth/google/callback'),
 ],
 
 'facebook' => [
