@@ -51,8 +51,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
 
     // Google OAuth
-    Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
-    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+Route::middleware('web')->group(function () {
+    Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+});
 
     // Facebook OAuth
     Route::get('/auth/facebook', [FacebookController::class, 'redirect'])->name('auth.facebook');
@@ -66,7 +68,6 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // 👉 ROUTE LOGOUT DITAMBAHKAN DI SINI
     Route::post('/logout', function (Request $request) {
         Auth::guard('web')->logout();
         $request->session()->invalidate();
