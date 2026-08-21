@@ -9,20 +9,20 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = auth?.user || {};
 
     const navigation = [
-        { name: 'Dashboard', href: route('dashboard'), icon: '🏠', active: route().current('dashboard') },
+        { name: 'Dashboard', href: route('dashboard'), icon: '', active: route().current('dashboard') },
         // Route ini sekarang sudah terdaftar otomatis di navbar
-        { name: 'Deteksi Stunting', href: route('stunting.check'), icon: '📏', active: route().current('stunting.*') },
-        { name: 'Hemoglobin', href: route('hemoglobin.index'), icon: '🩸', active: route().current('hemoglobin.index') },
-        { name: 'Resep Bergizi', href: route('recipes.index'), icon: '🥗', active: route().current('recipes.*') },
-        { name: 'Riwayat', href: route('stunting.history'), icon: '📋', active: route().current('history.*') },
+        { name: 'Deteksi Stunting', href: route('stunting.check'), icon: '', active: route().current('stunting.*') },
+        { name: 'Hemoglobin', href: route('hemoglobin.index'), icon: '', active: route().current('hemoglobin.index') },
+        { name: 'Resep Bergizi', href: route('recipes.index'), icon: '', active: route().current('recipes.*') },
+        { name: 'Riwayat', href: route('stunting.history'), icon: '', active: route().current('history.*') },
     ];
 
     if (user.role === 'admin') {
         navigation.push({ 
             name: 'Admin Resep', 
-            href: route('recipes.admin'), 
+            href: route('admin.dashboard'), 
             icon: '⚙️', 
-            active: route().current('recipes.admin') 
+            active: route().current('admin.dashboard') 
         });
     }
 

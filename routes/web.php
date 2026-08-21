@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Models\User;
 use Inertia\Inertia;
 
 /*
@@ -45,6 +47,22 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
         return Inertia::render('Auth/Login');
     })->name('login');
+
+    Route::post('/login', function (Request $request) {
+        $credentials = $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password yang dimasukkan salah.',
+        ])->onlyInput('email');
+    });
 
     // Register Manual
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
@@ -127,11 +145,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | Admin Protected Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-    Route::get('/recipes-admin', [RecipeController::class, 'adminIndex'])->name('recipes.admin');
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard Utama Admin
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Manajemen Pengguna 
+    Route::get('/users', function () {
+        return Inertia::render('Admin/Users', [
+            'users' => User::latest()->paginate(10),
+        ]);
+    })->name('users');
+
+    // CRUD Resep Admin
+    Route::get('/recipes', [RecipeController::class, 'adminIndex'])->name('recipes.index');
     Route::get('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
     Route::post('/recipes', [RecipeController::class, 'store'])->name('recipes.store');
     Route::get('/recipes/{recipe}/edit', [RecipeController::class, 'edit'])->name('recipes.edit');
     Route::put('/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
+});
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::get('/recipes-admin', [RecipeController::class, 'adminIndex'])->name('recipes.admin');
 });
